@@ -9,8 +9,9 @@ Created on Wed Mar 19 16:49:19 2025
 import sys
 import random
 
+
 # Uniform Random 
-def ur(board, piece):
+def ur(board):
     return random.choice(getEmptySpots(board))
     
 # Pure Monte Carlo Game Search
@@ -52,6 +53,15 @@ def placePiece(board, piece, move):
 def displayBoard(board):
     for row in board:
         print(row)
+
+def displayWinner(winner):
+    if winner == -1:
+        print("R Won!")
+    elif winner == 0:
+        print("Draw!")
+    elif winner == 1:
+        print("Y Won!")
+
 
 
 # Check if game in terminal state (win/draw)
@@ -112,24 +122,25 @@ def termState(board):
 
 # Switch to current player
 def altPiece(piece):
-    return 'R' if piece == 'R' else 'Y'
-
+    return 'R' if piece == 'Y' else 'Y'
+  
 # Simulate a game and return winner
-def simulateGame(board, piece, verbose=False):
+def simulateGame(board, piece, strat, verbose=False):
     boardC = board[:] # Copy board
     currPiece = piece 
     # Go through whole game
     while not boardFull(boardC):
-        emptySpots = getEmptySpots(board)
-        move = random.choice(emptySpots)
+        if strat=='ur': move = ur(boardC)
+        print(f"FINAL Move selected: {move[1]+1}")
         placePiece(boardC, currPiece, move)
         winner = termState(boardC)
         if winner is not None:
+            displayBoard(boardC)
             return winner
         currPiece = altPiece(currPiece)
     # No more spots -> draw
     return 0
-  
+    
 def main():
     # Get args
     if len(sys.argv) != 4:
@@ -142,8 +153,8 @@ def main():
         lines = file.readlines()
     lines = [line.strip() for line in lines]
     
-    alg = lines[0] # Algorithm
-    np = lines[1]  # Next player (red or yellow)
+    alg = lines[0].lower() # Algorithm
+    np = lines[1]          # Next player (red or yellow)
     board = [line for line in lines[2:]] # Create board (6 x 7)
     # O -> open
     # Make move by specifying column (1-7), full column = illegal
@@ -151,12 +162,11 @@ def main():
     # Win for yellow (Max player) -> 1
     # Draw -> 0
     
-    if alg == "UR":
-        move = ur(board, np)
-        print(f"FINAL Move selected: {move[1]+1}")
-    elif alg == "PMCGS":
-        move = pmcgs(board, np, sims)
-        print(f"FINAL Move selected: {move[1]+1}")
+    if alg == "ur": 
+        displayWinner(simulateGame(board, np, alg))
+    elif alg == "pmcgs": 
+        displayWinner(pmcgs(board, np, sims))
+        
         
 if __name__ == '__main__':
     main()

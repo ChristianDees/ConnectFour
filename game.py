@@ -74,7 +74,7 @@ class ConnectFour:
         return moves
 
     # Print game outcome and board
-    def displayResults(self, ):
+    def displayResults(self):
         print("-" * 13)
         for row in self.board: print(" ".join(row).upper())
         print("-" * 13)
@@ -84,7 +84,12 @@ class ConnectFour:
         else: print("No outcome!")
         
     # Official playing of Connect Four
-    def play(self, algorithm, verbose, sims):
+    def play(self, algorithms, verbose, sims, display=True):
+        altAlg = False
+        algIdx = 0
+        if len(algorithms) and len(sims)> 1: altAlg = True
+        alg = algorithms[0]
+        sim = sims[0]
         move = None   # Current move to be made
         while self.outcome is None:
             if self.isTerminal(move):
@@ -94,22 +99,27 @@ class ConnectFour:
             if self.boardFull(): self.outcome = 0 # Draw
             if self.outcome is not None: break
             # Handle Pure Monte Carlo Game Search
-            if algorithm == 'pmcgs':
+            if alg == 'pmcgs':
                 mcts = PMCGS(self, verbose)
-                mcts.run(sims) # Run for given simulations
+                mcts.run(sim) # Run for given simulations
                 move = mcts.bestMove() 
             # Handle Upper Confidence bound for Tree
-            elif algorithm == 'uct':
+            elif alg == 'uct':
                 uct = PMCGS(self, verbose, uct=True)
-                uct.run(sims)  # Run for given simulations
+                uct.run(sim)  # Run for given simulations
                 move = uct.bestMove()
             # Handle Uniform Random
-            elif algorithm == 'ur':
+            elif alg == 'ur':
                 ur = UR(self)
                 move = ur.bestMove()
             if move is None: break
-            print(f"FINAL Move selected: {move[1] + 1}") 
+            if verbose is not None: print(f"FINAL Move selected: {move[1] + 1}") 
             self.placePiece(move) # Make move
             self.switchPlayer()   # Alternate player
+            if altAlg:
+                algIdx ^= 1
+                alg = algorithms[algIdx]
+                sim = sims[algIdx]
         # Game is complete
-        self.displayResults()
+        if display: self.displayResults()
+        return self.outcome

@@ -21,7 +21,7 @@ class Node:
 
 
     # Selects best child from node 
-    def bestChild(self, uct=False, uctPrint=False):
+    def bestChild(self, uct=False, uctMaxi=None, currPlayer=None, uctPrint=False):
         bestChild = None
         bestValue = -float('inf')
         i =0
@@ -34,9 +34,18 @@ class Node:
                 if child.N == 0: ucb = float('inf') # Unexplored child
                 else: ucb = child.Q / (child.N + 1e-6) + math.sqrt(2 * math.log(self.N + 1) / (child.N + 1e-6))
                 if uctPrint: print(f"V{i}: {ucb}")
-                if ucb > bestValue:
-                    bestValue = ucb
-                    bestChild = child
+                if uctMaxi is not None:
+                    # Maximizing player
+                    if uctMaxi==currPlayer:
+                        if ucb > bestValue:
+                            bestValue = ucb
+                            bestChild = child
+                    # Minimizing player
+                    else:
+                        if ucb < bestValue:
+                            bestValue = ucb
+                            bestChild = child
+                
             # Use win-to-visit ratio if pmcgs
             else:
                 if child.Q > bestValue:

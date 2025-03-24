@@ -25,11 +25,12 @@ class UR:
 class PMCGS:
     
     # Initialize pmcgs for a game
-    def __init__(self, game, verbose=False, uct=False):
+    def __init__(self, game, verbosity=False, uct=False):
         self.game = game       # Game initial state
         self.root = Node()     # Starting point for search
-        self.verbose = verbose # Detailed output flag
+        self.verbosity = verbosity # Detailed output flag
         self.uct = uct         # Upper Confidence Bound for Trees
+        self.uctMaxi = self.game.player # Get the maximizer
     
     # Get unexplored node
     def explore(self):
@@ -40,10 +41,10 @@ class PMCGS:
                 # Get children
                 self.expand(currNode)
                 break
-            if self.verbose: print(f"\nwi: {currNode.W}\nni: {currNode.N}")
+            if self.verbosity: print(f"\nwi: {currNode.W}\nni: {currNode.N}")
             # Find best child, pmcgs => random, uct => best ucb value
-            currNode = currNode.bestChild(self.uct, uctPrint=(self.uct and self.verbose))
-            if self.verbose: print(f"Move selected: {currNode.move}")
+            currNode = currNode.bestChild(self.uct, self.uctMaxi, self.game.player, uctPrint=(self.uct and self.verbosity))
+            if self.verbosity: print(f"Move selected: {currNode.move}")
         return currNode
     
     # Generate children (possible moves)
@@ -53,7 +54,7 @@ class PMCGS:
         for move in moves:
             child = Node(move, parent=node)
             node.children.append(child)
-        if self.verbose: print("NODE ADDED\n")
+        if self.verbosity: print("NODE ADDED\n")
         return node.children  
 
     # Simulate a game being ran
@@ -93,19 +94,19 @@ class PMCGS:
             currNode.N += 1      # Visited
             currNode.W += result # Game outcome
             currNode.Q = currNode.W / currNode.N 
-            if self.verbose: print(f"\nUpdated values:\nwi: {currNode.W}\nni: {currNode.N}")
+            if self.verbosity: print(f"\nUpdated values:\nwi: {currNode.W}\nni: {currNode.N}")
             currNode = currNode.parent
             
     # Get best move after simulations        
     def bestMove(self):
         # Display Q values of children 
-        if self.verbose:
+        if self.verbosity:
             print("\n")
             for idx in range(7):
                 if idx < len(self.root.children): print(f"Column {idx+1}: {self.root.children[idx].Q:.2f}")
                 else: print(f"Column {idx+1}: null")
         # Best child contains the best move to make
-        bestChild = self.root.bestChild(self.uct, uctPrint=False)
+        bestChild = self.root.bestChild(self.uct, self.uctMaxi, self.game.player, uctPrint=False)
         if bestChild is not None: return bestChild.move
         return None
     

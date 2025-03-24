@@ -16,20 +16,21 @@ The program explores these algorithms by constructing a game tree, where each no
 The program simulates a round-robin tournament where these three algorithms compete against each other, allowing for an in-depth comparison of their performance in different game scenarios.
 
 ## Table of Contents
-1. [Getting Started](#getting-started)
+1. [Getting Started](#getting-started)  
    1.1. [Command-Line Arguments](#command-line-arguments)  
    1.2. [File Format](#file-format-exampletxt)  
    1.3. [Default Behavior](#default-behavior)  
    1.4. [Verbosity and Simulations](#verbosity-and-simulations)  
    1.5. [Tournament Mode](#tournament-mode)  
-2. [Example](#example)  
-3. [Modules](#modules)
-   3.1 [Go to treeNode.py](#treeNode)  
-   3.2 [Go to algorithms.py](#algorithms)  
-   3.3 [Go to game.py](#game)  
-   3.4 [Go to config.py](#config)
-4. [Contributing](#contributing)  
-   4.1. [Issues and Feature Requests](#issues-and-feature-requests)
+3. [Example](#example)  
+4. [Modules](#modules)  
+   4.1. [treeNode.py](#treenode)  
+   4.2. [algorithms.py](#algorithms)  
+   4.3. [game.py](#game)  
+   4.4. [config.py](#config)
+5. [Contributing](#contributing)  
+   5.1. [Issues and Feature Requests](#issues-and-feature-requests)
+
 
 
 
@@ -129,7 +130,7 @@ R Won!
 ```
 
 ## Modules
-- <a id="treeNode"></a> **`treeNode.py`**: Defines a **game tree node** that represents a game state, including possible move nodes, as well as visit and win counts.
+- <a id="treenode"></a> **`treeNode.py`**: Defines a **game tree node** that represents a game state, including possible move nodes, as well as visit and win counts.
 - <a id="algorithms"></a> **`algorithms.py`**: Contains the different **AI algorithms** for gameplay.
 - <a id="game"></a> **`game.py`**: Manages the **Connect Four game** logic, including board state, turn-taking, and win conditions.
 - <a id="config"></a> **`config.py`**: Handles **game setup** by parsing input files and configuring game parameters like the board layout, algorithms, and starting player.

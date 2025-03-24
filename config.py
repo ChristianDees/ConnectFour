@@ -10,6 +10,8 @@ import random
 
 # Extract and get configurations for game
 class GameConfig:
+    
+    # Initialize configuration instance
     def __init__(self, args):
         self.filename = None  # File holding player, board, and algorithm
         self.verbose = False  # Flag for detailed output
@@ -24,8 +26,11 @@ class GameConfig:
     def parseArgs(self, args):
         # If no arguments are provided, set default values
         if len(args) == 1:
-            self.board = [[' ' for _ in range(7)] for _ in range(6)]  # Empty board
+            self.board = [['o' for _ in range(7)] for _ in range(6)]  # Empty board
             self.player = random.choice(['r', 'y'])  # Randomly choose player
+            self.algorithm = 'ur'  # Default algorithm
+            self.verbose = False   # Default verbosity
+            self.sims = 0          # Default simulations
             return
 
         # Check for tournament mode

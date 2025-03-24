@@ -47,8 +47,6 @@ def tournament():
   
 # Setup game and parameters
 def main():
-    # Part 2: tournament()
-    # Part 1: Change algorithm to 'ur' in file
     # Get args and create game
     gameConfig = GameConfig(sys.argv)
     configs = gameConfig.getConfigs()
@@ -63,6 +61,5 @@ def main():
     except KeyboardInterrupt:
         print("\nExiting...")
         
-    
 if __name__ == "__main__":
     main()

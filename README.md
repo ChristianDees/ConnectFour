@@ -2,6 +2,7 @@
 
 ![Static Badge](https://img.shields.io/badge/Language-Python-blue)
 ![GitHub repo size](https://img.shields.io/github/repo-size/christiandees/ConnectFour)
+![GitHub all releases](https://img.shields.io/github/downloads/christiandees/ConnectFour/total)
 
 This program implements three distinct AI algorithms for playing Connect Four: **Uniform Random**, **Pure Monte Carlo Search**, and **Upper Confidence Bound for Trees (UCT)**. The game is played on a grid of 7 columns and 6 rows, with the objective of getting four of your pieces in a horizontal, vertical, or diagonal line.
 

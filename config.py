@@ -6,6 +6,7 @@ March 19, 2025
 
 
 import os
+import random
 
 # Extract and get configurations for game
 class GameConfig:
@@ -16,13 +17,25 @@ class GameConfig:
         self.algorithm = None # Algorithm to be used
         self.player = None    # Current player
         self.board = None     # Game board
-        self.parseArgs(args)  # Parse args to set vals
+        self.tournamentMode = False  # Flag for tournament mode
+        self.parseArgs(args)  # Parse args to set values
 
     # Sets all constructor values
     def parseArgs(self, args):
+        # If no arguments are provided, set default values
+        if len(args) == 1:
+            self.board = [[' ' for _ in range(7)] for _ in range(6)]  # Empty board
+            self.player = random.choice(['r', 'y'])  # Randomly choose player
+            return
+
+        # Check for tournament mode
+        if len(args) == 2 and args[1] == '-t':
+            self.tournamentMode = True
+            return
+
         # Validate enough args
         if len(args) != 4:
-            print("Usage: connectFour.py <filename> <verbosity> <number_of_simulations>")
+            print("Usage: main.py <filename> <verbosity> <number_of_simulations>")
             return None
         
         # Get filename
@@ -35,7 +48,8 @@ class GameConfig:
 
         # Validate verbosity
         verbosity = args[2].lower()
-        if verbosity == 'verbose':self.verbose = True
+        if verbosity == 'verbose':
+            self.verbose = True
         elif verbosity != 'brief':
             print("Error: Invalid verbosity. Use 'Verbose' or 'Brief'.")
             return None
@@ -63,13 +77,13 @@ class GameConfig:
 
         # Validate file size
         if len(lines) < 3:
-            print("Error: The file should contain at least 8 lines (algorithm, player, board (6x7)).")
+            print("Error: The file should contain at least 3 lines (algorithm, player, board (6x7)).")
             return None
         
         # Validate algorithm
         self.algorithm = lines[0]
         if self.algorithm not in ['ur', 'pmcgs', 'uct']:
-            print("Error: Invalid algorithm. Choose 'ur' (Uniform Random) or 'pmcgs' (Pure Monte Carlo Game Search) or uct (Upper Confidence Bound for trees).")
+            print("Error: Invalid algorithm. Choose 'ur' (Uniform Random), 'pmcgs' (Pure Monte Carlo Game Search), or 'uct' (Upper Confidence Bound for Trees).")
             return None
 
         # UR algorithm simulation constraint
@@ -90,10 +104,10 @@ class GameConfig:
 
         # Validate board size (should be 6x7)
         self.board = [list(line.strip()) for line in lines[2:]]
-        if not len(self.board) == 6 and all(len(row) == 7 for row in self.board):
+        if not len(self.board) == 6 or any(len(row) != 7 for row in self.board):
             print("Error: The board must be a 6x7 grid.")
             return None
     
-    # Get the games configurations
+    # Get the game's configurations
     def getConfigs(self):
         return self.board, self.player, self.algorithm, self.verbose, self.sims

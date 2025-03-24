@@ -11,7 +11,6 @@ import sys
 from game import ConnectFour
 from config import GameConfig
 import itertools
-import time
 
 # Round-robin tournament for algorithms
 def tournament():
@@ -30,13 +29,12 @@ def tournament():
     # Switch player based on seen setup before
     expectAlgs = {}
     player = None
-    totalGames = 100
+    totalGames = 1
     for (alg1, sims1), (alg2, sims2) in combinations:
         # Swap player if needed, start with r by default
         expectAlgs[(alg2, alg1)] = 'r' if player == 'y' else 'y' 
         player = expectAlgs.get((alg1, alg2), 'r')  
         # Run algorithms against each other for x games
-        time.start = 0
         for _ in range(totalGames):
             game = ConnectFour(board=None, player=player)
             result = game.play(algorithms=[alg1, alg2], verbose=None, sims=[sims1, sims2], display=False)
@@ -52,12 +50,19 @@ def main():
     # Part 2: tournament()
     # Part 1: Change algorithm to 'ur' in file
     # Get args and create game
-    configs = GameConfig(sys.argv).getConfigs()
-    if None in configs: return
-    board, player, algorithm, verbose, sims = configs
-    game = ConnectFour(board, player)
-    # Play the game
-    game.play([algorithm], verbose, [sims])
+    gameConfig = GameConfig(sys.argv)
+    configs = gameConfig.getConfigs()
+    try:
+        if gameConfig.tournamentMode: tournament()
+        elif None in configs: return
+        else:
+            board, player, algorithm, verbose, sims = configs
+            game = ConnectFour(board, player)
+            # Play the game
+            game.play([algorithm], verbose, [sims])
+    except KeyboardInterrupt:
+        print("\nExiting...")
+        
     
 if __name__ == "__main__":
     main()

@@ -28,7 +28,7 @@ The program simulates a round-robin tournament where these three algorithms comp
    3.2. [algorithms.py](#algorithms)  
    3.3. [game.py](#game)  
    3.4. [config.py](#config)
-4. [Contributing](#contributing)  
+4. [Contribution](#contribution)  
    4.1. [Issues and Feature Requests](#issues-and-feature-requests)
 
 
@@ -135,7 +135,7 @@ R Won!
 - <a id="game"></a> **`game.py`**: Manages the **Connect Four game** logic, including board state, turn-taking, and win conditions.
 - <a id="config"></a> **`config.py`**: Handles **game setup** by parsing input files and configuring game parameters like the board layout, algorithms, and starting player.
 
-## Contributing
+## Contribution
 
 We welcome contributions to the **Connect Four AI** project! Whether you want to add new features, fix bugs, or improve the documentation, your contributions are greatly appreciated.
 

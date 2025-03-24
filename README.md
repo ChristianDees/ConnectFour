@@ -16,9 +16,21 @@ The program simulates a round-robin tournament where these three algorithms comp
 
 ## Table of Contents
 1. [Getting Started](#getting-started)
-2. [Example](#example)
+   1.1. [Command-Line Arguments](#command-line-arguments)  
+   1.2. [File Format](#file-format-exampletxt)  
+   1.3. [Default Behavior](#default-behavior)  
+   1.4. [Verbosity and Simulations](#verbosity-and-simulations)  
+   1.5. [Tournament Mode](#tournament-mode)  
+2. [Example](#example)  
 3. [Modules](#modules)
-4. [Contributing](#contributing)
+   3.1 [Go to treeNode.py](#treeNode)  
+   3.2 [Go to algorithms.py](#algorithms)  
+   3.3 [Go to game.py](#game)  
+   3.4 [Go to config.py](#config)
+4. [Contributing](#contributing)  
+   4.1. [Issues and Feature Requests](#issues-and-feature-requests)
+
+
 
 ## Getting Started
 
@@ -40,9 +52,26 @@ Run a game with:
 3. **Next Six Lines**: The game board, with:
    - **`'r'`** for red, **`'y'`** for yellow, and **`'o'`** for empty spots.
 
-### **Default Behavior**
+### **Default Behavior**  
+If no arguments are provided, the program will:
+- Use an empty board.
+- Randomly select the first player.
+- Display brief output.
+- Set the algorithm to *uniform random*.
+- Run with 0 simulations.
 
-If no arguments are provided, the program will use an empty board and randomly choose the first player. Run as:
+To run the program with default settings, simply use:
+
+```bash
+./main.py
+```
+### **Verbosity and Simulations**  
+If you want to specify the verbosity level and the number of simulations, you can provide two arguments: `<verbosity>` and `<number_of_simulations>`. If no file is provided, the program will still:
+- Use an empty board.
+- Randomly choose the first player.
+
+Run the program with custom verbosity and simulation count as follows:
+
 ```bash
 ./main.py <verbosity> <number_of_simulations>
 ```
@@ -99,11 +128,10 @@ R Won!
 ```
 
 ## Modules
-
-- **`treeNode.py`**: Defines a **game tree node** that represents a game state, including possible move nodes, as well as visit and win counts.
-- **`algorithms.py`**: Contains the different **AI algorithms** for gameplay.
-- **`game.py`**: Manages the **Connect Four game** logic, including board state, turn-taking, and win conditions.
-- **`config.py`**: Handles **game setup** by parsing input files and configuring game parameters like the board layout, algorithms, and starting player.
+- <a id="treeNode"></a> **`treeNode.py`**: Defines a **game tree node** that represents a game state, including possible move nodes, as well as visit and win counts.
+- <a id="algorithms"></a> **`algorithms.py`**: Contains the different **AI algorithms** for gameplay.
+- <a id="game"></a> **`game.py`**: Manages the **Connect Four game** logic, including board state, turn-taking, and win conditions.
+- <a id="config"></a> **`config.py`**: Handles **game setup** by parsing input files and configuring game parameters like the board layout, algorithms, and starting player.
 
 ## Contributing
 
@@ -111,3 +139,4 @@ We welcome contributions to the **Connect Four AI** project! Whether you want to
 
 ### Issues and Feature Requests
 If you find a bug or have a feature request, please [open an issue](https://github.com/christiandees/ConnectFour/issues) and provide a detailed description. We encourage contributions to improve the project, and we’ll be happy to review your ideas!
+

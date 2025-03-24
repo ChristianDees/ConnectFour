@@ -4,8 +4,8 @@ March 19, 2025
 @authors: Christian Dees and Aitiana Mondragon
 """
 
-import math
 
+import math
 
 # Nodes of a game tree
 class Node:

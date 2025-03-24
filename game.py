@@ -6,16 +6,17 @@ March 19, 2025
 
 
 import random
+from algorithms import PMCGS, UR
 
 # Represents game of Connect Four
 class ConnectFour:
     
     # Initialize game
     def __init__(self, board=None, player=None):
-        # 6x7 game board
-        self.board = board if board is not None else [["o" for _ in range(7)] for _ in range(6)]  
-        # Current player
+        # 6x7 game board, current player, game winner
+        self.board = board if board is not None else [["o" for _ in range(7)] for _ in range(6)] 
         self.player = player if player is not None else random.choice('y','r') 
+        self.outcome = None
     
     # Check if board has no spots available
     def boardFull(self):
@@ -73,10 +74,42 @@ class ConnectFour:
         return moves
 
     # Print game outcome and board
-    def displayResults(self, result):
+    def displayResults(self, ):
         print("-" * 13)
         for row in self.board: print(" ".join(row).upper())
         print("-" * 13)
-        if result == -1: print("Y Won!")  # -1 => y
-        elif result == 0: print("Draw!")  # 0 => draw
-        elif result == 1: print("R Won!") # 1 => r
+        if self.outcome == -1: print("Y Won!")  # -1 => y
+        elif self.outcome == 0: print("Draw!")  # 0 => draw
+        elif self.outcome == 1: print("R Won!") # 1 => r
+        else: print("No outcome!")
+        
+    # Official playing of Connect Four
+    def play(self, algorithm, verbose, sims):
+        move = None   # Current move to be made
+        while self.outcome is None:
+            if self.isTerminal(move):
+                # If this is current player, then previous won
+                if self.player == 'r': self.outcome = -1  # Y won
+                elif self.player == 'y': self.outcome = 1 # R won
+            if self.boardFull(): self.outcome = 0 # Draw
+            if self.outcome is not None: break
+            # Handle Pure Monte Carlo Game Search
+            if algorithm == 'pmcgs':
+                mcts = PMCGS(self, verbose)
+                mcts.run(sims) # Run for given simulations
+                move = mcts.bestMove() 
+            # Handle Upper Confidence bound for Tree
+            elif algorithm == 'uct':
+                uct = PMCGS(self, verbose, uct=True)
+                uct.run(sims)  # Run for given simulations
+                move = uct.bestMove()
+            # Handle Uniform Random
+            elif algorithm == 'ur':
+                ur = UR(self)
+                move = ur.bestMove()
+            if move is None: break
+            print(f"FINAL Move selected: {move[1] + 1}") 
+            self.placePiece(move) # Make move
+            self.switchPlayer()   # Alternate player
+        # Game is complete
+        self.displayResults()

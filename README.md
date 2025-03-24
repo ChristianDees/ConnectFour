@@ -22,14 +22,14 @@ The program simulates a round-robin tournament where these three algorithms comp
    1.3. [Default Behavior](#default-behavior)  
    1.4. [Verbosity and Simulations](#verbosity-and-simulations)  
    1.5. [Tournament Mode](#tournament-mode)  
-3. [Example](#example)  
-4. [Modules](#modules)  
-   4.1. [treeNode.py](#treenode)  
-   4.2. [algorithms.py](#algorithms)  
-   4.3. [game.py](#game)  
-   4.4. [config.py](#config)
-5. [Contributing](#contributing)  
-   5.1. [Issues and Feature Requests](#issues-and-feature-requests)
+2. [Example](#example)  
+3. [Modules](#modules)  
+   3.1. [treeNode.py](#treenode)  
+   3.2. [algorithms.py](#algorithms)  
+   3.3. [game.py](#game)  
+   3.4. [config.py](#config)
+4. [Contributing](#contributing)  
+   4.1. [Issues and Feature Requests](#issues-and-feature-requests)
 
 
 

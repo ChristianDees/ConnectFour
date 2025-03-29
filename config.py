@@ -8,6 +8,7 @@ March 19, 2025
 import os
 import random
 
+
 # Extract and get configurations for game
 class GameConfig:
     

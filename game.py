@@ -5,8 +5,15 @@ March 19, 2025
 """
 
 
-import random
-from algorithms import PMCGS, UR
+from algorithms import UR, PMCGS, UCT
+
+# Game constants
+ROWS = 6
+COLS = 7
+PLAYER_R = 'r'
+PLAYER_Y = 'y'
+EMPTY = 'o'
+
 
 # Represents game of Connect Four
 class ConnectFour:
@@ -14,27 +21,36 @@ class ConnectFour:
     # Initialize game
     def __init__(self, board=None, player=None):
         # 6x7 game board, current player, game winner
-        self.board = board if board is not None else [["o" for _ in range(7)] for _ in range(6)] 
-        self.player = player if player is not None else random.choice('y','r') 
+        self.board = board if board is not None else [[EMPTY] * COLS for _ in range(ROWS)]  
+        self.player = player if player is not None else PLAYER_R
         self.outcome = None
     
     # Check if board has no spots available
     def boardFull(self):
-        return all(self.board[0][col] != 'o' for col in range(7))
+        return all(self.board[0][col] != EMPTY for col in range(7))    
+    
+    # Function to get the legal moves (first available empty spot in each column)
+    def getMoves(self):
+        moves = []
+        for col in range(COLS):
+            # From bottom to top
+            for row in range(ROWS - 1, -1, -1):  
+                if self.board[row][col] == EMPTY:
+                    moves.append((row, col))
+                    break # Only need 1 per column
+        return moves
     
     # Place piece on board spot
-    def placePiece(self, move):
+    def placePiece(self, move, player):
         row, col = move
-        # If spot is empty
-        if self.board[row][col] == 'o': self.board[row][col] = self.player
+        self.board[row][col] = player
     
-    # Undo a given move
-    def undoMove(self, move):
+    # Make space empty
+    def removePiece(self, move):
         row, col = move
-        # Make spot empty
-        if self.board[row][col] != 'o': self.board[row][col] = 'o'
-    
-    # Check if game is over from win 
+        self.board[row][col] = EMPTY
+
+    # Function to check if the game has ended (win, loss, or draw)
     def isTerminal(self, lastMove):
         if lastMove is None: return False
         row, col = lastMove
@@ -44,7 +60,7 @@ class ConnectFour:
             [(1, 1), (-1, -1)], # Positive Diagonal 
             [(1, -1), (-1, 1)]  # Negative Diagonal 
         ]
-        # Check every direction 
+        # Each direction in relation to last move
         for direction in directions:
             count = 1  # Count the last move itself
             for dr, dc in direction:
@@ -53,73 +69,47 @@ class ConnectFour:
                 while 0 <= r + dr < 6 and 0 <= c + dc < 7 and self.board[r + dr][c + dc] == self.board[row][col]:
                     count += 1
                     r, c = r + dr, c + dc
-                # 4 in row is won
-                if count >= 4: return True
+                # Win if 4 consecutive match
+                if count >= 4: 
+                    if self.board[row][col] == PLAYER_R: self.outcome = -1
+                    elif self.board[row][col] == PLAYER_Y: self.outcome = 1
+                    return True
+        # Check if no spots/draw      
+        if self.boardFull(): 
+            self.outcome = 0
+            return True
         return False
 
-    # Alternate current player 
-    def switchPlayer(self):
-        self.player = 'r' if self.player == 'y' else 'y'
-    
-    # Get empty spots on board
-    def getMoves(self):
-        moves = []
-        for col in range(7):
-            # Start at the bottom row
-            for row in range(5, -1, -1): 
-                # Append any open spots
-                if self.board[row][col] == 'o':  
-                    moves.append((row, col))
-                    break
-        return moves
+    # Print results
+    def displayOutcome(self):
+        for row in self.board:
+            print(" ".join(row))
+        print("=" * 13)
+        if self.outcome == 1: print("Y WON!")
+        elif self.outcome == -1: print("R WON!")
+        elif self.outcome == 0: print("DRAW!")
 
-    # Print game outcome and board
-    def displayResults(self):
-        print("-" * 13)
-        for row in self.board: print(" ".join(row).upper())
-        print("-" * 13)
-        if self.outcome == -1: print("Y Won!")  # -1 => y
-        elif self.outcome == 0: print("Draw!")  # 0 => draw
-        elif self.outcome == 1: print("R Won!") # 1 => r
-        else: print("No outcome!")
-        
-    # Official playing of Connect Four
-    def play(self, algorithms, verbose, sims, display=True):
-        altAlg = False
-        algIdx = 0
-        if len(algorithms) and len(sims)> 1: altAlg = True
-        alg = algorithms[0]
-        sim = sims[0]
-        move = None   # Current move to be made
-        while self.outcome is None:
+    # Run the game
+    def play(self, algs, sims, display):
+        # Get algorithms and simulations
+        alg1, sim1 = algs[0], sims[0]
+        alg2, sim2 = (algs[1], sims[1]) if len(algs) > 1 else (alg1, sim1)
+        # Map algs to their classes/objs
+        algorithms = {
+            'ur': UR(self),
+            'pmcgs': PMCGS(self),
+            'uct': UCT(self)
+        }
+        while (1):
+            # Make first move
+            if self.player == PLAYER_R: move = algorithms[alg1].bestMove(sim1)
+            else: move = algorithms[alg2].bestMove(sim2)
+            # Make the move
+            self.placePiece(move, self.player)
+            # Check if game over
             if self.isTerminal(move):
-                # If this is current player, then previous won
-                if self.player == 'r': self.outcome = -1  # Y won
-                elif self.player == 'y': self.outcome = 1 # R won
-            if self.boardFull(): self.outcome = 0 # Draw
-            if self.outcome is not None: break
-            # Handle Pure Monte Carlo Game Search
-            if alg == 'pmcgs':
-                mcts = PMCGS(self, verbose)
-                mcts.run(sim) # Run for given simulations
-                move = mcts.bestMove() 
-            # Handle Upper Confidence bound for Tree
-            elif alg == 'uct':
-                uct = PMCGS(self, verbose, uct=True)
-                uct.run(sim)  # Run for given simulations
-                move = uct.bestMove()
-            # Handle Uniform Random
-            elif alg == 'ur':
-                ur = UR(self)
-                move = ur.bestMove()
-            if move is None: break
-            if verbose is not None: print(f"FINAL Move selected: {move[1] + 1}") 
-            self.placePiece(move) # Make move
-            self.switchPlayer()   # Alternate player
-            if altAlg:
-                algIdx ^= 1
-                alg = algorithms[algIdx]
-                sim = sims[algIdx]
-        # Game is complete
-        if display: self.displayResults()
-        return self.outcome
+                if display: self.displayOutcome()
+                if self.outcome != 0: return self.player
+                return None
+            # Alternate player
+            self.player = PLAYER_R if self.player == PLAYER_Y else PLAYER_Y
